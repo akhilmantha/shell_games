@@ -42,4 +42,47 @@ function draw {
     echo $buf
   done
 }
+function step {
+  for (( row = 0; row < HEIGHT; row++ ))
+  do
+    for (( column = 0; column < WIDTH; column++ ))
+    do
+      key=1$row\0$column
+
+      x1=$(($row - 1))
+      if [ $x1 -lt 0 ]; then x1=$(($HEIGHT-1)); fi
+      x2=$row
+      x3=$((($row + 1) % $HEIGHT))
+
+      y1=$(($column - 1))
+      if [ $y1 -lt 0 ]; then y1=$(($WIDTH-1)); fi
+      y2=$column
+      y3=$((($column + 1) % $WIDTH))
+
+      alive=$((
+        ${prevWorld[1$x1\0$y1]} +
+        ${prevWorld[1$x2\0$y1]} +
+        ${prevWorld[1$x3\0$y1]} +
+        ${prevWorld[1$x1\0$y2]} +
+        ${prevWorld[1$x3\0$y2]} +
+        ${prevWorld[1$x1\0$y3]} +
+        ${prevWorld[1$x2\0$y3]} +
+        ${prevWorld[1$x3\0$y3]}
+      ))
+
+      if [ ${prevWorld[$key]} == 0 ]
+      then
+        if [ $alive -eq 3 ]
+        then
+          world[$key]=1
+        fi
+      else
+        if [ \( $alive -lt 2 \) -o \( $alive -gt 3 \) ]
+        then
+          world[$key]=0
+        fi
+      fi
+    done
+  done
+}
 
