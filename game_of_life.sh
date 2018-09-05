@@ -86,3 +86,58 @@ function step {
   done
 }
 
+tput cup $(($TOP - 5)) $(($SCREEN_WIDTH / 2 - 16))
+echo " ______  _______ _______ _______ "
+tput cup $(($TOP - 4)) $(($SCREEN_WIDTH / 2 - 16))
+echo "|     |_|_     _|    ___|    ___|"
+tput cup $(($TOP - 3)) $(($SCREEN_WIDTH / 2 - 16))
+echo "|       |_|   |_|    ___|    ___|"
+tput cup $(($TOP - 2)) $(($SCREEN_WIDTH / 2 - 16))
+echo "|_______|_______|___|   |_______|"
+line=""
+for (( column = 0; column <= WIDTH; column++ ))
+do
+  line+="_"
+done
+tput cup $(($TOP - 1)) $(($LEFT))
+echo $line
+tput cup $(($TOP + $HEIGHT)) $(($LEFT))
+echo $line
+
+for (( row = 0; row <= HEIGHT; row++ ))
+do
+tput cup $(($TOP + $row)) $(($LEFT - 1))
+echo "|"
+tput cup $(($TOP + $row)) $(($LEFT + $WIDTH + 1))
+echo "|"
+done
+
+# Init by random
+for (( row = 0; row < HEIGHT; row++ ))
+do
+  for (( column = 0; column < WIDTH; column++ ))
+  do
+    key=1$row\0$column
+    world[$key]=$(($RANDOM % 2))
+  done
+done
+
+while [ 1==1 ]
+do
+  for (( row = 0; row < HEIGHT; row++ ))
+  do
+    for (( column = 0; column < WIDTH; column++ ))
+    do
+      key=1$row\0$column
+      prevWorld[$key]=${world[$key]}
+    done
+  done
+
+  step
+  draw
+done
+
+tput cnorm
+IFS="$OLD_IFS"
+
+
